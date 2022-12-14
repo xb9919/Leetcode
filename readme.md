@@ -550,7 +550,7 @@ public:
 你返回所有和为 0 且不重复的三元组。
 注意：答案中不可以包含重复的三元组。
 
-难点在要在$O(n^2)$解决，以及去重
+难点在要在$a \ne 0$ $O(n^2)$解决，以及去重
 ```
 class Solution {
 public:
@@ -572,7 +572,6 @@ public:
                 }
                 else if (nums[i] + nums[L] + nums[R] < 0) L++;
                 else R--;
-                
             }
         }
         return result;
