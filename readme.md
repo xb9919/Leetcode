@@ -734,6 +734,7 @@ public:
 
 ## 20. 有效的括号
 python经典白给题
+```
 class Solution(object):
     def isValid(self, s):
         """
@@ -754,3 +755,5 @@ class Solution(object):
             return True
         else:
             return False
+
+```
