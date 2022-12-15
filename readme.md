@@ -12,6 +12,10 @@
   - [9. 盛最多水的容器](#9-盛最多水的容器)
   - [10. 整数转罗马数字](#10-整数转罗马数字)
   - [15. 三数之和](#15-三数之和)
+  - [16. 最接近的三数之和](#16-最接近的三数之和)
+  - [17. 最接近的三数之和](#17-最接近的三数之和)
+  - [19. 删除链表的倒数第 N 个结点](#19-删除链表的倒数第-n-个结点)
+  - [20. 有效的括号](#20-有效的括号)
 
 # leetcode 刷题记录
 
@@ -578,3 +582,175 @@ public:
     }
 };
 ```
+
+## 16. 最接近的三数之和
+给你一个长度为 n 的整数数组 nums 和 一个目标值 target。请你从 nums 中选出三个整数，使它们的和与 target 最接近。
+返回这三个数的和。假定每组输入只存在恰好一个解。
+```
+class Solution {
+public:
+    int threeSumClosest(vector<int>& nums, int target) {
+        int result, L, R;
+        int gap = INT_MAX;
+        sort(nums.begin(), nums.end());
+        for (int i = 0; i < nums.size(); i++) {
+            L = i + 1;
+            R = nums.size() - 1;
+            if (i != 0 && nums[i] == nums[i - 1]) continue;
+            while (L < R) {
+                if ((nums[i] + nums[L] + nums[R]) < target) {
+                    if (abs(nums[i] + nums[L] + nums[R] - target) < gap) {
+                        result = nums[i] + nums[L] + nums[R];
+                        gap = abs(result - target);
+                    }
+                    L++;
+                }
+                else if ((nums[i] + nums[L] + nums[R]) == target) return target;
+                else {
+                    if (abs(nums[i] + nums[L] + nums[R] - target) < gap) {
+                        result = nums[i] + nums[L] + nums[R];
+                        gap = abs(result - target);
+                    }
+                    R--;
+                }
+            }
+        }
+        return result;
+    }
+};
+```
+## 17. 最接近的三数之和
+给定一个仅包含数字 2-9 的字符串，返回所有它能表示的字母组合。答案可以按 任意顺序 返回。
+给出数字到字母的映射如下（与电话按键相同）。注意 1 不对应任何字母。
+
+还是对cpp不熟悉，debug de了很久用的递归，回溯会快很多
+注：to_string(char)是他的ascii码,
+```
+class Solution {
+public:
+    vector<string> letterCombinations(string digits) {
+        vector<string> map = { "","abc","def","ghi","jkl","mno","pqrs","tuv","wxyz" };
+        vector<string> result = {};
+        if (digits.size() == 0) return result;
+        else if (digits.size() == 1) {
+            int number = digits[0] - '0';
+            string tmap = map[number - 1];
+            for (int i = 0; i < map[number - 1].size(); i++) {
+                cout << map[number - 1][i];
+                string t1(1, map[number - 1][i]);
+                result.push_back(t1);
+            }
+            return result;
+        }
+        int number = digits[0] - '0';
+        for (int j = 0; j < map[number - 1].size(); j++) {
+            auto tmp = letterCombinations(digits.substr(1));
+            for (auto t = tmp.begin(); t != tmp.end(); t++)
+                result.push_back((*t).insert(0,1, map[number - 1][j]));
+        }
+        return result;
+    }
+};
+```
+```
+class Solution {
+public:
+    vector<string> letterCombinations(string digits) {
+        vector<string> combinations;
+        if (digits.empty()) {
+            return combinations;
+        }
+        unordered_map<char, string> phoneMap{
+            {'2', "abc"},
+            {'3', "def"},
+            {'4', "ghi"},
+            {'5', "jkl"},
+            {'6', "mno"},
+            {'7', "pqrs"},
+            {'8', "tuv"},
+            {'9', "wxyz"}
+        };
+        string combination;
+        backtrack(combinations, phoneMap, digits, 0, combination);
+        return combinations;
+    }
+
+    void backtrack(vector<string>& combinations, const unordered_map<char, string>& phoneMap, const string& digits, int index, string& combination) {
+        if(index==digits.size()){
+            combinations.push_back(combination);
+        }else{
+            string letter = phoneMap.at(digits[index]);
+            for(int i=0;i<letter.size();i++){
+                combination.push_back(letter[i]);
+                backtrack(combinations,phoneMap,digits,index+1,combination);
+                combination.pop_back();
+            }
+        }
+        
+    }
+};
+```
+## 19. 删除链表的倒数第 N 个结点
+给你一个链表，删除链表的倒数第 n 个结点，并且返回链表的头结点。
+
+只遍历一遍，双指针（对指针不熟啊）
+```
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode* removeNthFromEnd(ListNode* head, int n) {
+        int count=1;
+        ListNode* head1 =head;
+        ListNode* pre = head;
+        ListNode* target = head;
+        if(!head->next) return head->next;
+        while(head1->next){
+            head1 = (head1->next);
+            count+=1;
+            if(count>n){
+                if(pre!=target){
+                    pre=(pre->next);
+                    target = (pre->next);
+                }else{
+                    target = pre->next;
+                }
+            }
+        }
+        if(target==head) return head->next;
+        pre->next = target->next; 
+        return head;
+    }
+};
+```
+
+## 20. 有效的括号
+python经典白给题
+class Solution(object):
+    def isValid(self, s):
+        """
+        :type s: str
+        :rtype: bool
+        """
+        maps={"(":")","[":"]","{":"}"}
+        #left = ["(","[","{"}]
+        #right = [")","]","}"]
+        stack = []
+        for it in s:
+            if it in maps.keys():
+                stack.append(it)
+            else: 
+                if len(stack)==0 or it!=maps[stack.pop()]:
+                    return False
+        if len(stack)==0:
+            return True
+        else:
+            return False
